@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include trbabs *.css
+recursive-include trbabs *.csv
+recursive-include trbabs *.html
+recursive-include trbabs *.ico
+recursive-include trbabs *.js
+recursive-include trbabs *.json
+recursive-include trbabs *.md
+recursive-include trbabs *.png
+recursive-include trbabs *.py
+recursive-include trbabs *.svg
+recursive-include trbabs *.txt
+recursive-exclude trbabs *.pyc
