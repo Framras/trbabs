@@ -1,0 +1,95 @@
+{
+  "creation": "2019-12-14 22:16:09.467351",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "company",
+    "year",
+    "column_break_3",
+    "month",
+    "section_break_5",
+    "babs_limit",
+    "section_break_7",
+    "create_babs_forms",
+    "column_break_9",
+    "last_created"
+  ],
+  "fields": [
+    {
+      "fieldname": "company",
+      "fieldtype": "Link",
+      "hidden": 1,
+      "label": "Company",
+      "options": "Company"
+    },
+    {
+      "fieldname": "year",
+      "fieldtype": "Int",
+      "in_list_view": 1,
+      "label": "Year"
+    },
+    {
+      "fieldname": "month",
+      "fieldtype": "Int",
+      "in_list_view": 1,
+      "label": "Month"
+    },
+    {
+      "fieldname": "create_babs_forms",
+      "fieldtype": "Button",
+      "label": "Create BA BS forms"
+    },
+    {
+      "fieldname": "last_created",
+      "fieldtype": "Datetime",
+      "label": "Last Created Date"
+    },
+    {
+      "default": "5000",
+      "fieldname": "babs_limit",
+      "fieldtype": "Int",
+      "label": "BA BS Limit"
+    },
+    {
+      "fieldname": "column_break_3",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "section_break_5",
+      "fieldtype": "Section Break"
+    },
+    {
+      "fieldname": "section_break_7",
+      "fieldtype": "Section Break"
+    },
+    {
+      "fieldname": "column_break_9",
+      "fieldtype": "Column Break"
+    }
+  ],
+  "modified": "2019-12-15 21:15:58.049642",
+  "modified_by": "Administrator",
+  "module": "Trbabs",
+  "name": "BA BS Period",
+  "name_case": "UPPER CASE",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "quick_entry": 1,
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "track_changes": 1
+}
