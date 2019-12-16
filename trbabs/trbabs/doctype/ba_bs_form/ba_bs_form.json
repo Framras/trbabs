@@ -12,18 +12,20 @@
     "month",
     "section_break_6",
     "supplier",
-    "column_break_16",
+    "column_break_8",
     "customer",
-    "section_break_8",
+    "section_break_10",
     "ba_invoice_count",
+    "column_break_12",
     "ba_total",
-    "column_break_10",
+    "section_break_14",
     "bs_invoice_count",
+    "column_break_16",
     "bs_total",
     "section_break_18",
     "send_form",
     "column_break_20",
-    "form_sent"
+    "form_sent_date"
   ],
   "fields": [
     {
@@ -81,13 +83,6 @@
       "options": "Customer"
     },
     {
-      "default": "0",
-      "fieldname": "form_sent",
-      "fieldtype": "Check",
-      "label": "Form Sent",
-      "read_only": 1
-    },
-    {
       "fieldname": "tax_id",
       "fieldtype": "Data",
       "label": "Tax ID"
@@ -101,14 +96,6 @@
       "fieldtype": "Section Break"
     },
     {
-      "fieldname": "section_break_8",
-      "fieldtype": "Section Break"
-    },
-    {
-      "fieldname": "column_break_10",
-      "fieldtype": "Column Break"
-    },
-    {
       "fieldname": "column_break_16",
       "fieldtype": "Column Break"
     },
@@ -119,9 +106,30 @@
     {
       "fieldname": "column_break_20",
       "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "column_break_8",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "section_break_10",
+      "fieldtype": "Section Break"
+    },
+    {
+      "fieldname": "column_break_12",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "section_break_14",
+      "fieldtype": "Section Break"
+    },
+    {
+      "fieldname": "form_sent_date",
+      "fieldtype": "Date",
+      "label": "Form Sent Date"
     }
   ],
-  "modified": "2019-12-15 22:46:51.299255",
+  "modified": "2019-12-16 21:08:15.694963",
   "modified_by": "Administrator",
   "module": "Trbabs",
   "name": "BA BS Form",
