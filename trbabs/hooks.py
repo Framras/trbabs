@@ -10,6 +10,7 @@ app_icon = "octicon octicon-file-directory"
 app_color = "grey"
 app_email = "bilgi@framras.com.tr"
 app_license = "MIT"
+fixtures = ["BA BS Bildirimi Mutabakat Formu"]
 
 # Includes in <head>
 # ------------------
