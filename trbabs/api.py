@@ -127,3 +127,76 @@ def create_babs_forms(babsyear: int, babsmonth: int, babslimit: int):
                 frappe_doc.save()
 
     return frappe.utils.now_datetime()
+
+
+def get_dynamic_links_of_type(document, doctype, return_type):
+    if has_dynamic_links_of_type(document, doctype, return_type):
+        names = []
+        for name in frappe.get_all("Dynamic Link",
+                                   filters={"link_name": document, "link_doctype": doctype, "parenttype": return_type},
+                                   fields=["parent"]):
+            names.append(name.parent)
+        return names
+    else:
+        return None
+
+
+def get_dynamic_link_count_of_type(document, doctype, return_type):
+    if frappe.db.count("Dynamic Link",
+                       filters={"link_name": document, "link_doctype": doctype, "parenttype": return_type
+                                }) is not None:
+        return frappe.db.count("Dynamic Link",
+                               filters={"link_name": document, "link_doctype": doctype, "parenttype": return_type})
+    else:
+        return 0
+
+
+def has_dynamic_links_of_type(document, doctype, return_type):
+    if frappe.db.count("Dynamic Link",
+                       filters={"link_name": document, "link_doctype": doctype, "parenttype": return_type
+                                }) is not None:
+        if frappe.db.count("Dynamic Link",
+                           filters={"link_name": document, "link_doctype": doctype, "parenttype": return_type}) > 0:
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
+@frappe.whitelist()
+def send_babs_form(form_name):
+    babs_doc = frappe.get_doc("BA BS Form", form_name)
+    recipients = []
+    if babs_doc.customer is not None:
+        if frappe.get_value("Customer", babs_doc.customer, "email_id") is not None:
+            recipients.append(frappe.get_value("Customer", babs_doc.customer, "email_id"))
+        elif babs_doc.supplier is None:
+            frappe.msgprint(msg="Please define an e-mail address for {0}.".format(babs_doc.customer),
+                            title="Customer")
+    elif babs_doc.supplier is not None:
+        if has_dynamic_links_of_type(babs_doc.supplier, "Supplier", "Contact"):
+            for name in get_dynamic_links_of_type(babs_doc.supplier, "Supplier", "Contact"):
+                if frappe.db.get_value("Contact", name, "email_id") is not None:
+                    recipients.append(frappe.db.get_value("Contact", name, "email_id"))
+        elif has_dynamic_links_of_type(babs_doc.supplier, "Supplier", "Address"):
+            for name in get_dynamic_links_of_type(babs_doc.supplier, "Supplier", "Address"):
+                if frappe.db.get_value("Address", name, "email_id") is not None:
+                    recipients.append(frappe.db.get_value("Address", name, "email_id"))
+        else:
+            frappe.msgprint(msg="Please define an e-mail address for {0}.".format(babs_doc.supplier),
+                            title="Supplier")
+    message = ""
+    email_args = {
+        "recipients": recipients,
+        "message": message,
+        "subject": "[{0}] BA BS BİLDİRİMİ MUTABAKAT FORMU".format(frappe.defaults.get_user_default("Company")),
+        "attachments": [frappe.attach_print(doctype="BA BS Form", name=form_name, file_name="{name}.pdf".format(
+            name=form_name.replace(" ", "-").replace("/", "-")), print_format="BA BS Bildirimi Mutabakat Formu",
+                                            lang="tr",
+                                            print_letterhead=False)],
+        "reference_doctype": "BA BS Form",
+        "reference_name": form_name
+    }
+    frappe.utils.background_jobs.enqueue(method=frappe.sendmail, queue='short', timeout=300, is_async=True,
+                                         **email_args)
