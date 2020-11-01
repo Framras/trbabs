@@ -28,13 +28,13 @@ def create_babs_forms(babsyear: int, babsmonth: int, babslimit: int):
                                                            filters={"docstatus": 1, "company": company,
                                                                     "customer": customer.name,
                                                                     "posting_date": [">=", start_date]},
-                                                           fields=["sum(net_total) as sales_total", "customer"],
+                                                           fields=["sum(base_net_total) as sales_total", "customer"],
                                                            group_by="customer")
             customer_total_since_end = frappe.db.get_all("Sales Invoice",
                                                          filters={"docstatus": 1, "company": company,
                                                                   "customer": customer.name,
                                                                   "posting_date": [">", end_date]},
-                                                         fields=["sum(net_total) as sales_total", "customer"],
+                                                         fields=["sum(base_net_total) as sales_total", "customer"],
                                                          group_by="customer")
             if len(customer_total_since_end) > 0:
                 customer_total = int(
@@ -62,12 +62,12 @@ def create_babs_forms(babsyear: int, babsmonth: int, babslimit: int):
             supplier_total_since_start = frappe.db.get_all("Purchase Invoice",
                                                            filters={"docstatus": 1, "supplier": supplier.name,
                                                                     "bill_date": [">=", start_date]},
-                                                           fields=["sum(net_total) as purchase_total", "supplier"],
+                                                           fields=["sum(base_net_total) as purchase_total", "supplier"],
                                                            group_by="supplier")
             supplier_total_since_end = frappe.db.get_all("Purchase Invoice",
                                                          filters={"docstatus": 1, "supplier": supplier.name,
                                                                   "bill_date": [">", end_date]},
-                                                         fields=["sum(net_total) as purchase_total", "supplier"],
+                                                         fields=["sum(base_net_total) as purchase_total", "supplier"],
                                                          group_by="supplier")
             if len(supplier_total_since_end) > 0:
                 supplier_total = int(supplier_total_since_start[0].purchase_total - supplier_total_since_end[
