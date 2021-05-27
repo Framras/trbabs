@@ -53,20 +53,20 @@ def create_babs_forms(babsyear: int, babsmonth: int, babslimit: int):
     for supplier in suppliers:
         purchase_invoice_count_since_start = frappe.db.count("Purchase Invoice",
                                                              filters={"docstatus": 1, "supplier": supplier.name,
-                                                                      "bill_date": [">=", start_date]})
+                                                                      "posting_date": [">=", start_date]})
         purchase_invoice_count_since_end = frappe.db.count("Purchase Invoice",
                                                            filters={"docstatus": 1, "supplier": supplier.name,
-                                                                    "bill_date": [">", end_date]})
+                                                                    "posting_date": [">", end_date]})
         purchase_invoice_count = purchase_invoice_count_since_start - purchase_invoice_count_since_end
         if purchase_invoice_count > 0:
             supplier_total_since_start = frappe.db.get_all("Purchase Invoice",
                                                            filters={"docstatus": 1, "supplier": supplier.name,
-                                                                    "bill_date": [">=", start_date]},
+                                                                    "posting_date": [">=", start_date]},
                                                            fields=["sum(base_net_total) as purchase_total", "supplier"],
                                                            group_by="supplier")
             supplier_total_since_end = frappe.db.get_all("Purchase Invoice",
                                                          filters={"docstatus": 1, "supplier": supplier.name,
-                                                                  "bill_date": [">", end_date]},
+                                                                  "posting_date": [">", end_date]},
                                                          fields=["sum(base_net_total) as purchase_total", "supplier"],
                                                          group_by="supplier")
             if len(supplier_total_since_end) > 0:
