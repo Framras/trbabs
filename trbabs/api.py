@@ -216,12 +216,13 @@ def create_babs_forms(babsyear: int, babsmonth: int, babslimit: int):
                         "month": babsmonth,
                         "tax_id": tax_id
                     })
-                    if frappe_doc.form_sent == 0:
+                    if frappe_doc.form_sent_date == 0:
                         if babsmap.get(tax_id).get("supplier") is not None:
                             frappe_doc.supplier = babsmap.get(tax_id).get("supplier")
                         frappe_doc.ba_invoice_count = babsmap.get(tax_id).get("ba_invoice_count")
                         frappe_doc.ba_total = babsmap.get(tax_id).get("ba_total")
                         frappe_doc.save()
+
         if babsmap.get(tax_id).get("bs_total"):
             if babsmap.get(tax_id).get("bs_total") >= int(babslimit):
                 if not frappe.db.exists({
