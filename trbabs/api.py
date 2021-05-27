@@ -249,7 +249,7 @@ def create_babs_forms(babsyear: int, babsmonth: int, babslimit: int):
                         "month": babsmonth,
                         "tax_id": tax_id
                     })
-                    if frappe_doc.form_sent == 0:
+                    if frappe_doc.form_sent_date == 0:
                         if babsmap.get(tax_id).get("customer") is not None:
                             frappe_doc.customer = babsmap.get(tax_id).get("customer")
                         frappe_doc.bs_invoice_count = babsmap.get(tax_id).get("bs_invoice_count")
