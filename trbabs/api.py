@@ -135,9 +135,13 @@ def create_babs_forms(babsyear: int, babsmonth: int, babslimit: int):
                                                 ba_invoice_count=purchase_invoice_count,
                                                 ba_total=supplier_total)
             else:
-                babsmap[supplier.tax_id]["supplier"] = supplier.name
-                babsmap[supplier.tax_id]["ba_invoice_count"] += purchase_invoice_count
-                babsmap[supplier.tax_id]["ba_total"] += supplier_total
+                if babsmap.get(supplier.tax_id).get("supplier") is None:
+                    babsmap[supplier.tax_id]["supplier"] = supplier.name
+                    babsmap[supplier.tax_id]["ba_invoice_count"] = purchase_invoice_count
+                    babsmap[supplier.tax_id]["ba_total"] = supplier_total
+                else:
+                    babsmap[supplier.tax_id]["ba_invoice_count"] += purchase_invoice_count
+                    babsmap[supplier.tax_id]["ba_total"] += supplier_total
 
         purchase_invoice_count_since_start = frappe.db.count("Purchase Invoice",
                                                              filters={"docstatus": 1, "company": company,
@@ -176,76 +180,81 @@ def create_babs_forms(babsyear: int, babsmonth: int, babslimit: int):
                                                 bs_invoice_count=purchase_invoice_count,
                                                 bs_total=supplier_total)
             else:
-                babsmap[supplier.tax_id]["customer"] = supplier.name
-                babsmap[supplier.tax_id]["bs_invoice_count"] += purchase_invoice_count
-                babsmap[supplier.tax_id]["bs_total"] += supplier_total
+                if babsmap.get(supplier.tax_id).get("customer") is None:
+                    babsmap[supplier.tax_id]["customer"] = supplier.name
+                    babsmap[supplier.tax_id]["bs_invoice_count"] = purchase_invoice_count
+                    babsmap[supplier.tax_id]["bs_total"] = supplier_total
+                else:
+                    babsmap[supplier.tax_id]["bs_invoice_count"] += purchase_invoice_count
+                    babsmap[supplier.tax_id]["bs_total"] += supplier_total
 
     for tax_id in babsmap.keys():
-        if babsmap.get(tax_id).get("ba_total") >= int(babslimit):
-            if not frappe.db.exists({
-                "doctype": "BA BS Form",
-                "company": company,
-                "year": babsyear,
-                "month": babsmonth,
-                "tax_id": tax_id
-            }):
-                new_doc = frappe.new_doc("BA BS Form")
-                new_doc.company = company
-                new_doc.year = babsyear
-                new_doc.month = babsmonth
-                new_doc.tax_id = tax_id
-                if babsmap.get(tax_id).get("supplier") is not None:
-                    new_doc.supplier = babsmap.get(tax_id).get("supplier")
-                new_doc.ba_invoice_count = babsmap.get(tax_id).get("ba_invoice_count")
-                new_doc.ba_total = babsmap.get(tax_id).get("ba_total")
-                new_doc.insert()
-            else:
-                frappe_doc = frappe.get_doc({
+        if babsmap.get(tax_id).get("ba_total"):
+            if babsmap.get(tax_id).get("ba_total") >= int(babslimit):
+                if not frappe.db.exists({
                     "doctype": "BA BS Form",
                     "company": company,
                     "year": babsyear,
                     "month": babsmonth,
                     "tax_id": tax_id
-                })
-                if frappe_doc.form_sent == 0:
+                }):
+                    new_doc = frappe.new_doc("BA BS Form")
+                    new_doc.company = company
+                    new_doc.year = babsyear
+                    new_doc.month = babsmonth
+                    new_doc.tax_id = tax_id
                     if babsmap.get(tax_id).get("supplier") is not None:
-                        frappe_doc.supplier = babsmap.get(tax_id).get("supplier")
-                    frappe_doc.ba_invoice_count = babsmap.get(tax_id).get("ba_invoice_count")
-                    frappe_doc.ba_total = babsmap.get(tax_id).get("ba_total")
-                    frappe_doc.save()
-
-        if babsmap.get(tax_id).get("bs_total") >= int(babslimit):
-            if not frappe.db.exists({
-                "doctype": "BA BS Form",
-                "company": company,
-                "year": babsyear,
-                "month": babsmonth,
-                "tax_id": tax_id
-            }):
-                new_doc = frappe.new_doc("BA BS Form")
-                new_doc.company = company
-                new_doc.year = babsyear
-                new_doc.month = babsmonth
-                new_doc.tax_id = tax_id
-                if babsmap.get(tax_id).get("customer") is not None:
-                    new_doc.customer = babsmap.get(tax_id).get("customer")
-                new_doc.bs_invoice_count = babsmap.get(tax_id).get("bs_invoice_count")
-                new_doc.bs_total = babsmap.get(tax_id).get("bs_total")
-                new_doc.insert()
-            else:
-                frappe_doc = frappe.get_doc({
+                        new_doc.supplier = babsmap.get(tax_id).get("supplier")
+                    new_doc.ba_invoice_count = babsmap.get(tax_id).get("ba_invoice_count")
+                    new_doc.ba_total = babsmap.get(tax_id).get("ba_total")
+                    new_doc.insert()
+                else:
+                    frappe_doc = frappe.get_doc({
+                        "doctype": "BA BS Form",
+                        "company": company,
+                        "year": babsyear,
+                        "month": babsmonth,
+                        "tax_id": tax_id
+                    })
+                    if frappe_doc.form_sent == 0:
+                        if babsmap.get(tax_id).get("supplier") is not None:
+                            frappe_doc.supplier = babsmap.get(tax_id).get("supplier")
+                        frappe_doc.ba_invoice_count = babsmap.get(tax_id).get("ba_invoice_count")
+                        frappe_doc.ba_total = babsmap.get(tax_id).get("ba_total")
+                        frappe_doc.save()
+        if babsmap.get(tax_id).get("bs_total"):
+            if babsmap.get(tax_id).get("bs_total") >= int(babslimit):
+                if not frappe.db.exists({
                     "doctype": "BA BS Form",
                     "company": company,
                     "year": babsyear,
                     "month": babsmonth,
                     "tax_id": tax_id
-                })
-                if frappe_doc.form_sent == 0:
+                }):
+                    new_doc = frappe.new_doc("BA BS Form")
+                    new_doc.company = company
+                    new_doc.year = babsyear
+                    new_doc.month = babsmonth
+                    new_doc.tax_id = tax_id
                     if babsmap.get(tax_id).get("customer") is not None:
-                        frappe_doc.customer = babsmap.get(tax_id).get("customer")
-                    frappe_doc.bs_invoice_count = babsmap.get(tax_id).get("bs_invoice_count")
-                    frappe_doc.bs_total = babsmap.get(tax_id).get("bs_total")
-                    frappe_doc.save()
+                        new_doc.customer = babsmap.get(tax_id).get("customer")
+                    new_doc.bs_invoice_count = babsmap.get(tax_id).get("bs_invoice_count")
+                    new_doc.bs_total = babsmap.get(tax_id).get("bs_total")
+                    new_doc.insert()
+                else:
+                    frappe_doc = frappe.get_doc({
+                        "doctype": "BA BS Form",
+                        "company": company,
+                        "year": babsyear,
+                        "month": babsmonth,
+                        "tax_id": tax_id
+                    })
+                    if frappe_doc.form_sent == 0:
+                        if babsmap.get(tax_id).get("customer") is not None:
+                            frappe_doc.customer = babsmap.get(tax_id).get("customer")
+                        frappe_doc.bs_invoice_count = babsmap.get(tax_id).get("bs_invoice_count")
+                        frappe_doc.bs_total = babsmap.get(tax_id).get("bs_total")
+                        frappe_doc.save()
 
     return frappe.utils.now_datetime()
 
